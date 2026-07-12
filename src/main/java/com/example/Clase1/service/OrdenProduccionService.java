@@ -15,16 +15,19 @@ import com.example.Clase1.repository.MaquinaRepository;
 import com.example.Clase1.repository.OperarioRepository;
 import com.example.Clase1.repository.OrdenProduccionRepository;
 import com.example.Clase1.repository.TurnoRepository;
+import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -77,7 +80,8 @@ public class OrdenProduccionService {
         Pageable pageable = PageRequest.of(pagina, tamano,
                 Sort.by(Sort.Order.desc("fecha"), Sort.Order.desc("id")));
 
-        Page<OrdenProduccion> page = ordenRepository.buscar(filtro, maquinaId, estado, desde, hasta, pageable);
+        Page<OrdenProduccion> page = ordenRepository.findAll(
+                construirFiltro(filtro, maquinaId, estado, desde, hasta), pageable);
 
         List<OrdenProduccionResponse> contenido = page.getContent().stream()
                 .map(this::aResponse)
@@ -90,6 +94,39 @@ public class OrdenProduccionService {
                 page.getTotalElements(),
                 page.getTotalPages()
         );
+    }
+
+    /**
+     * Arma dinamicamente el filtro de la busqueda: solo agrega condiciones para
+     * los parametros que llegan (no null). Al construirse con la Criteria API,
+     * no genera parametros nulos "sueltos", asi que funciona en SQL Server y en
+     * PostgreSQL por igual.
+     */
+    private Specification<OrdenProduccion> construirFiltro(String busqueda, Integer maquinaId,
+                                                           EstadoOrden estado, LocalDate desde, LocalDate hasta) {
+        return (root, query, cb) -> {
+            List<Predicate> condiciones = new ArrayList<>();
+            if (busqueda != null) {
+                String patron = "%" + busqueda.toLowerCase() + "%";
+                condiciones.add(cb.or(
+                        cb.like(cb.lower(root.get("opCodigo")), patron),
+                        cb.like(cb.lower(root.get("diseno")), patron)
+                ));
+            }
+            if (maquinaId != null) {
+                condiciones.add(cb.equal(root.get("maquina").get("id"), maquinaId));
+            }
+            if (estado != null) {
+                condiciones.add(cb.equal(root.get("estado"), estado));
+            }
+            if (desde != null) {
+                condiciones.add(cb.greaterThanOrEqualTo(root.get("fecha"), desde));
+            }
+            if (hasta != null) {
+                condiciones.add(cb.lessThanOrEqualTo(root.get("fecha"), hasta));
+            }
+            return cb.and(condiciones.toArray(new Predicate[0]));
+        };
     }
 
     @Transactional
