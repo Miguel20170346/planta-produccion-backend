@@ -1,0 +1,349 @@
+### Listar todos los turnos
+GET http://localhost:8080/api/turnos
+
+### Crear un turno
+POST http://localhost:8080/api/turnos
+Content-Type: application/json
+
+{
+  "nombre": "Noche"
+}
+
+### Crear otro turno
+POST http://localhost:8080/api/turnos
+Content-Type: application/json
+
+{
+  "nombre": "Dia"
+}
+
+### Obtener un turno por id
+GET http://localhost:8080/api/turnos/1
+
+### Actualizar un turno
+PUT http://localhost:8080/api/turnos/1
+Content-Type: application/json
+
+{
+  "nombre": "Nocturno"
+}
+
+### Eliminar un turno
+DELETE http://localhost:8080/api/turnos/2
+
+### Probar validacion: nombre vacio (debe dar error 400)
+POST http://localhost:8080/api/turnos
+Content-Type: application/json
+
+{
+  "nombre": ""
+}
+
+### Probar duplicado: crea "Noche" otra vez (debe dar error 409)
+POST http://localhost:8080/api/turnos
+Content-Type: application/json
+
+{
+  "nombre": "Noche"
+}
+
+##############################################
+### MAQUINA
+##############################################
+
+### Listar todas las maquinas
+GET http://localhost:8080/api/maquinas
+
+### Crear una maquina
+POST http://localhost:8080/api/maquinas
+Content-Type: application/json
+
+{
+  "nombre": "BR 290",
+  "tipo": "Formadora de cajas"
+}
+
+### Crear otra maquina (sin tipo, es opcional)
+POST http://localhost:8080/api/maquinas
+Content-Type: application/json
+
+{
+  "nombre": "Bolsa 16"
+}
+
+### Obtener una maquina por id
+GET http://localhost:8080/api/maquinas/1
+
+### Actualizar una maquina
+PUT http://localhost:8080/api/maquinas/1
+Content-Type: application/json
+
+{
+  "nombre": "BR 290",
+  "tipo": "Formadora automatica"
+}
+
+### Eliminar una maquina
+DELETE http://localhost:8080/api/maquinas/2
+
+##############################################
+### OPERARIO
+##############################################
+
+### Listar operarios
+GET http://localhost:8080/api/operarios
+
+### Crear operario (con numero)
+POST http://localhost:8080/api/operarios
+Content-Type: application/json
+
+{
+  "numero": "16",
+  "nombre": "Samuel"
+}
+
+### Crear operario sin numero (opcional)
+POST http://localhost:8080/api/operarios
+Content-Type: application/json
+
+{
+  "nombre": "Ana Perez"
+}
+
+### Actualizar operario
+PUT http://localhost:8080/api/operarios/1
+Content-Type: application/json
+
+{
+  "numero": "16",
+  "nombre": "Samuel Rodriguez"
+}
+
+### Eliminar operario
+DELETE http://localhost:8080/api/operarios/2
+
+##############################################
+### ACTIVIDAD
+##############################################
+
+### Listar actividades
+GET http://localhost:8080/api/actividades
+
+### Crear actividad
+POST http://localhost:8080/api/actividades
+Content-Type: application/json
+
+{
+  "codigo": 1,
+  "descripcion": "Limpieza de maquina"
+}
+
+### Crear otra actividad
+POST http://localhost:8080/api/actividades
+Content-Type: application/json
+
+{
+  "codigo": 2,
+  "descripcion": "Montaje de bobina"
+}
+
+### Probar codigo negativo (debe dar 400)
+POST http://localhost:8080/api/actividades
+Content-Type: application/json
+
+{
+  "codigo": -5,
+  "descripcion": "Prueba"
+}
+
+### Eliminar actividad
+DELETE http://localhost:8080/api/actividades/2
+
+##############################################
+### ORDEN DE PRODUCCION (con relaciones)
+##############################################
+
+### Listar ordenes
+GET http://localhost:8080/api/ordenes
+
+### Crear una orden (maquinaId es obligatorio; operarioId y turnoId opcionales)
+### Ajusta los ids a los que existan en tu base.
+POST http://localhost:8080/api/ordenes
+Content-Type: application/json
+
+{
+  "fecha": "2026-06-03",
+  "diseno": "Tazoreal",
+  "opCodigo": "0326-0104B",
+  "maquinaId": 1,
+  "operarioId": 1,
+  "turnoId": 1,
+  "horaInicio": "22:00:00",
+  "horaFin": "06:00:00"
+}
+
+### Obtener una orden por id (mira la maquina/operario/turno anidados)
+GET http://localhost:8080/api/ordenes/1
+
+### Actualizar una orden
+PUT http://localhost:8080/api/ordenes/1
+Content-Type: application/json
+
+{
+  "fecha": "2026-06-03",
+  "diseno": "Tazoreal v2",
+  "opCodigo": "0326-0104B",
+  "maquinaId": 1,
+  "turnoId": 1
+}
+
+### Probar maquina inexistente (debe dar 400)
+POST http://localhost:8080/api/ordenes
+Content-Type: application/json
+
+{
+  "fecha": "2026-06-03",
+  "opCodigo": "PRUEBA-999",
+  "maquinaId": 9999
+}
+
+### Eliminar una orden
+DELETE http://localhost:8080/api/ordenes/1
+
+##############################################
+### BOBINA (detalle de la orden)
+##############################################
+
+### Listar todas las bobinas
+GET http://localhost:8080/api/bobinas
+
+### Listar solo las bobinas de la orden 1
+GET http://localhost:8080/api/bobinas?ordenId=1
+
+### Crear una bobina (ajusta ordenId al que exista)
+POST http://localhost:8080/api/bobinas
+Content-Type: application/json
+
+{
+  "ordenId": 1,
+  "codigo": "LK26-495-C-D-E 135",
+  "gramaje": 225,
+  "anchoMm": 835,
+  "diametroInicialMm": 0,
+  "diametroFinalMm": 0
+}
+
+### Eliminar una bobina
+DELETE http://localhost:8080/api/bobinas/1
+
+##############################################
+### ADHESIVO (detalle de la orden)
+##############################################
+
+### Listar adhesivos de la orden 1
+GET http://localhost:8080/api/adhesivos?ordenId=1
+
+### Crear un adhesivo (consumo se calcula solo: inicio - fin)
+POST http://localhost:8080/api/adhesivos
+Content-Type: application/json
+
+{
+  "ordenId": 1,
+  "nombre": "Patriot C-10",
+  "tipo": "FONDO",
+  "lote": "L-2026-06",
+  "fechaCaducidad": "2027-01-01",
+  "inicioKg": 14,
+  "finKg": 1.75
+}
+
+### Eliminar un adhesivo
+DELETE http://localhost:8080/api/adhesivos/1
+
+##############################################
+### CAJA DE EMPAQUE (detalle de la orden)
+##############################################
+
+### Listar cajas de la orden 1
+GET http://localhost:8080/api/cajas?ordenId=1
+
+### Crear una caja de empaque
+POST http://localhost:8080/api/cajas
+Content-Type: application/json
+
+{
+  "ordenId": 1,
+  "nombre": "ATC",
+  "serie": "SER-001",
+  "fechaFabricacion": "2026-06-03",
+  "cantidad": 14
+}
+
+### Eliminar una caja
+DELETE http://localhost:8080/api/cajas/1
+
+##############################################
+### REPORTE DE TIEMPO (detalle de la orden)
+##############################################
+
+### Listar reportes de la orden 1
+GET http://localhost:8080/api/reportes-tiempo?ordenId=1
+
+### Crear un reporte de tiempo (actividadId es opcional)
+POST http://localhost:8080/api/reportes-tiempo
+Content-Type: application/json
+
+{
+  "ordenId": 1,
+  "actividadId": 1,
+  "horaInicial": "22:00:00",
+  "horaFinal": "23:30:00"
+}
+
+### Crear un reporte SIN actividad (opcional)
+POST http://localhost:8080/api/reportes-tiempo
+Content-Type: application/json
+
+{
+  "ordenId": 1,
+  "horaInicial": "23:30:00",
+  "horaFinal": "00:15:00"
+}
+
+### Eliminar un reporte de tiempo
+DELETE http://localhost:8080/api/reportes-tiempo/1
+
+##############################################
+### PRODUCCION (1-a-1 con la orden)
+##############################################
+
+### Listar produccion de la orden 1
+GET http://localhost:8080/api/producciones?ordenId=1
+
+### Crear el bloque de produccion de una orden
+POST http://localhost:8080/api/producciones
+Content-Type: application/json
+
+{
+  "ordenId": 1,
+  "bolsasProducidas": 5775,
+  "productoConformeKg": 32.35,
+  "desperdicioPapelKg": 2.541,
+  "desperdicioRefilKg": 1.75,
+  "metrosLineales": 5775,
+  "cantidadPorBulto": 400,
+  "totalCantidadProducida": 5600,
+  "observaciones": "Lateral 6kg / Fondo 3.75kg"
+}
+
+### Intentar crear un SEGUNDO bloque para la misma orden (debe dar 409)
+POST http://localhost:8080/api/producciones
+Content-Type: application/json
+
+{
+  "ordenId": 1,
+  "bolsasProducidas": 100
+}
+
+### Eliminar un registro de produccion
+DELETE http://localhost:8080/api/producciones/1

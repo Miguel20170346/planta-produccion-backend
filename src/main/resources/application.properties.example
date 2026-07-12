@@ -1,0 +1,18 @@
+# Plantilla de configuración.
+# Copiá este archivo como "application.properties" (en la misma carpeta) y completá
+# tus datos reales de SQL Server. El archivo application.properties está en .gitignore
+# para no subir credenciales al repositorio.
+
+spring.application.name=Clase1
+
+# ===== Conexión a SQL Server =====
+spring.datasource.url=jdbc:sqlserver://localhost:1433;databaseName=PlantaProduccion;encrypt=true;trustServerCertificate=true
+spring.datasource.username=TU_USUARIO
+spring.datasource.password=TU_CONTRASEÑA
+spring.datasource.driver-class-name=com.microsoft.sqlserver.jdbc.SQLServerDriver
+
+# ===== JPA / Hibernate =====
+# none = Hibernate NO toca el esquema (lo administra el script SQL)
+spring.jpa.hibernate.ddl-auto=none
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
