@@ -93,11 +93,17 @@ Todos los recursos soportan las operaciones REST estándar: `GET` (listar), `GET
 ### Requisitos
 
 - JDK 17+
-- SQL Server con la base de datos `PlantaProduccion` creada (ver el script del esquema).
+- SQL Server
 
-### Configuración
+### 1. Crear la base de datos
 
-Editar `src/main/resources/application.properties` con los datos de tu SQL Server:
+Ejecutá el script [`db/schema.sql`](db/schema.sql) en tu SQL Server (por ejemplo desde
+SSMS). Crea la base `PlantaProduccion` con sus 10 tablas vacías.
+
+### 2. Configurar la conexión
+
+Copiá `src/main/resources/application.properties.example` como
+`application.properties` (en la misma carpeta) y completá tus datos de SQL Server:
 
 ```properties
 spring.datasource.url=jdbc:sqlserver://localhost:1433;databaseName=PlantaProduccion;encrypt=true;trustServerCertificate=true
@@ -105,7 +111,9 @@ spring.datasource.username=TU_USUARIO
 spring.datasource.password=TU_CONTRASEÑA
 ```
 
-### Ejecutar
+> El `application.properties` real está en `.gitignore` para no subir credenciales.
+
+### 3. Ejecutar
 
 ```bash
 # En la raíz del proyecto (usa el Maven Wrapper incluido)
