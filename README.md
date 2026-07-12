@@ -6,7 +6,7 @@ se llena en cada turno: registra las órdenes de producción con todo su detalle
 prima, tiempos, resultado) y expone los datos para consultarlos y reportarlos.
 
 Este repositorio es el **backend**. El frontend (React) vive en un repositorio aparte:
-👉 [planta-frontend](../planta-frontend).
+👉 [planta-produccion-frontend](https://github.com/Miguel20170346/planta-produccion-frontend).
 
 ---
 
