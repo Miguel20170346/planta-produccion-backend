@@ -9,6 +9,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -31,6 +33,7 @@ public class Produccion {
 
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "orden_id", nullable = false, unique = true)
+    @OnDelete(action = OnDeleteAction.CASCADE) // borrar la orden borra su produccion
     private OrdenProduccion orden;
 
     @Column(name = "bolsas_producidas")

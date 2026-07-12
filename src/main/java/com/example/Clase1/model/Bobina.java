@@ -9,6 +9,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -30,6 +32,7 @@ public class Bobina {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "orden_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE) // borrar la orden borra sus bobinas
     private OrdenProduccion orden;
 
     @Column(name = "codigo", length = 50)
